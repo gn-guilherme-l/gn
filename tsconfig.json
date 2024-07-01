@@ -1,0 +1,54 @@
+{
+  "compilerOptions": {
+    "composite": true,                        // Enable project to be referenced.
+    "target": "ESNext",                       // ES2022 supported by: Node 20; 2021 Chrome, Edge, Firefox, Opera; 2022 Samsung Internet; 2023 iOS Safari.
+    "lib": [
+        "ESNext"                              // All ESxxxx APIs (This changes as the JavaScript specification evolves).
+    ],
+    "module": "ESNext",                       // Ref: https://www.typescriptlang.org/docs/handbook/modules/reference.html#es2015-es2020-es2022-esnext
+    "skipLibCheck": true,                     // Type check only the code specifically referred to in the app's source code.
+    "allowJs": true,
+    "checkJs": true,
+
+    "moduleDetection": "force",
+
+    /* Bundler mode */
+    "moduleResolution": "Bundler",            // Support `package.json` "imports" and "exports", but unlike the Node.js, `bundler` never requires file extensions on relative paths in imports.
+    "resolveJsonModule": true,                // Allow importing modules with a `.json` extension.
+    "isolatedModules": true,                  // Warn code that can’t be correctly interpreted by a single-file transpilation process.
+    "jsx": "react-jsx",                       // Use JSX Runtime to transform `.tsx` files (no scoped `React`).
+    "declarationMap": true,                   // Allow editors to go to the original `.ts` file when using features like `Go to Definition`.
+    "preserveSymlinks": true,                 // Do not resolve the real path of symlinks. Imports are all resolved relative to the location of the symbolic link file, rather than relative to the path that the symbolic link resolves to.
+    "useDefineForClassFields": true,          // Use ECMA runtime behavior for class fields.
+    "downlevelIteration": true,               // Allow iteration primitives (`for / of`, Array spread, argument spread, and Symbol.iterator) to be used more accurately in ES5 environments if a `Symbol.iterator` implementation is present.
+
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+
+    /* Linting */
+    "allowUnreachableCode": false,            // Disallow unreachable code.
+    "allowUnusedLabels": false,               // Disallow unused labels.
+    "strict": true,                           // Strict mode - enable the following rules (Explicit enabled as some tools like ESLint ignore `strictNullChecks` in `strict`):
+    "alwaysStrict": true,                     // Strict mode - Enable ECMAScript strict mode parser and emit “use strict” for each file.
+    "noImplicitAny": true,                    // Strict mode - Error whenever `any` is infered.
+    "noImplicitThis": true,                   // Strict mode - Error ‘this’ expressions with an implied ‘any’ type.
+    "strictBindCallApply": true,              // Strict mode - Type check `call`, `bind`, and `apply` if they are invoked with correct argument for the underlying function.
+    "strictFunctionTypes": true,              // Strict mode - Strict match functions parameter types.
+    "strictNullChecks": true,                 // Strict mode - Do not ignore `null` and `undefined`. `null` and `undefined` have their own distinct types.
+    "strictPropertyInitialization": true,     // Strict mode - Error when a class property is declared but not set in the constructor.
+    "useUnknownInCatchVariables": true,       // Strict mode - Default the type of the variable in a catch clause from `any` to `unknown`.
+    "noUnusedLocals": true,                   // Error on unused local variables. Ensures that any non-empty case inside a switch statement includes either break, return, or throw.
+    "noUnusedParameters": true,               // Error on unused function parameters.
+    "noFallthroughCasesInSwitch": true,       // Error fallthrough cases in switch statements. Non-empty `case`s should include either `break`, `return`, or `throw`.
+    "forceConsistentCasingInFileNames": true, // Error to include a file by a casing different from the casing on disk.
+    "noErrorTruncation": true,                // Do not truncate error messages.
+
+    // strictest
+    "exactOptionalPropertyTypes": true,          // Disallow `undefined` for properties on type or interfaces which have a ? prefix.
+    "noImplicitOverride": true,                  // Ensure that the sub-classes never go out of sync, by forcing override functions to include the keyword `override`.
+    "noImplicitReturns": true,                   // Check all code paths in a function to ensure they return a value.
+    "noPropertyAccessFromIndexSignature": true,  // Error unknown fields in dot syntax instead of indexed syntax.
+    "noUncheckedIndexedAccess": true,            // Add `undefined` to any un-declared field in the type.
+  },
+  "include": ["**/*"]
+}
