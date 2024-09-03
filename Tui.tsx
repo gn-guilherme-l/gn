@@ -1,117 +1,11 @@
-#!/usr/bin/env bun
-import { execFile } from "node:child_process"
-import * as path from "node:path"
+import { parseArgs } from "node:util"
 import { useState, useEffect } from "react"
-import { Newline, render, Text, useApp } from "ink"
+import { Newline, Text, useApp } from "ink"
 import Spinner from "ink-spinner"
 import { getWorkspaces } from "./workspaces"
+import { run, Status } from "./run"
 
-enum Status {
-  running,
-  success,
-  error,
-}
-
-const test = async (onUpdate?: (project: string, script: string, status: Status, output?: string) => void) => {
-  const workspaces = getWorkspaces()
-  const { packages, rootProjects } = workspaces
-
-  // TEMP
-  // rootProjects.length = 0
-  // rootProjects.push(["good-notes"])
-
-  const runScript = async (project: string, script: string, ...args: string[]) => {
-    const scriptCmd = packages[project]?.json.scripts?.[script]
-    if (!scriptCmd) {
-      onUpdate?.(project, script, Status.success)
-      return { status: Status.success }
-    }
-    onUpdate?.(project, script, Status.running)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const projectPath = packages[project]!.path
-    const pathEnv: string[] = [
-      path.join(projectPath, "node_modules", ".bin"),
-      path.join(workspaces.rootDir, "node_modules", ".bin"),
-    ]
-    if (process.env["PATH"]) pathEnv.push(process.env["PATH"])
-    const PATH = pathEnv.join(path.delimiter)
-
-    // Special case for XP - Vitest with `--pool=forks` exits before finishing all forks
-    let command = "yarn"
-    let commandArgs = ["run", script]
-    if (script === "test" && scriptCmd.includes("--pool=forks")) {
-      const vitest = Bun.which("vitest", {
-        cwd: projectPath,
-        PATH,
-      })
-      if (!vitest) {
-        throw new Error(`"vitest" command not found in PATH\nCWD=${projectPath}\nPATH=${PATH}`)
-      }
-      command = vitest
-      commandArgs = []
-    }
-
-    try {
-      const child = execFile(command, [...commandArgs, ...args], {
-        cwd: projectPath,
-        env: {
-          ...process.env,
-          PATH,
-        },
-      })
-      const stderr: string[] = []
-      const stdout: string[] = []
-      child.stdout?.on("data", (data: string) => {
-        stdout.push(data.toString())
-      })
-      child.stderr?.on("data", (data: string) => {
-        stderr.push(data.toString())
-      })
-      return new Promise<{ status: Status }>((resolve) => {
-        child.addListener("exit", (code) => {
-          code ??= 0
-          const status = code === 0 ? Status.success : Status.error
-          onUpdate?.(project, script, status, stderr.join("") + stdout.join(""))
-          resolve({ status })
-        })
-      })
-    } catch (e) {
-      onUpdate?.(
-        project,
-        script,
-        Status.error,
-        `${script} ${command} ${[...commandArgs, ...args].join(" ")}\nPATH = ${pathEnv.join(path.delimiter)}\n${JSON.stringify(e)}\n${(e as Error).stack}`,
-      )
-      return { status: Status.error }
-    }
-  }
-
-  const promises: Promise<void>[] = []
-
-  const lintAndTest = async (project: string) => {
-    await Promise.all([
-      runScript(project, "lint"),
-      runScript(project, "test", "--run", "--passWithNoTests"),
-    ])
-  }
-
-  for (const projects of rootProjects) {
-    await Promise.all(
-      projects.map(async (project) =>
-        runScript(project, "build").then(({ status }) => {
-          if (status === Status.success) {
-            promises.push(lintAndTest(project))
-          }
-        }),
-      ),
-    )
-  }
-
-  await Promise.all(promises)
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-const Tui = () => {
+export const Tui = () => {
   const app = useApp()
   const [done, setDone] = useState(false)
   const [projects, setProjects] = useState<{
@@ -134,8 +28,42 @@ const Tui = () => {
     }, {})
     setProjects(initialProjects)
 
+    const options = (() => {
+      const {
+        values: { build, test, lint },
+      } = parseArgs({
+        options: {
+          build: {
+            type: "boolean",
+            short: "b",
+          },
+          test: {
+            type: "boolean",
+            short: "t",
+          },
+          lint: {
+            type: "boolean",
+            short: "l",
+          },
+        },
+      })
+      // The default is to run all
+      if (typeof build === "undefined" && typeof test === "undefined" && typeof lint === "undefined") {
+        return {
+          build: true,
+          test: true,
+          lint: true,
+        }
+      }
+      return {
+        build: !!build,
+        test: !!test,
+        lint: !!lint,
+      }
+    })()
+
     // eslint-disable-next-line @typescript-eslint/no-floating-promises -- Fire and forget
-    test((project, script, status, output = "") => {
+    run(options, (project, script, status, output = "") => {
       setProjects((projects) => {
         const scripts = {
           ...projects[project]?.scripts,
@@ -233,8 +161,4 @@ const Tui = () => {
       )}
     </>
   )
-}
-
-if (import.meta.path === Bun.main) {
-  render(<Tui />)
 }
