@@ -7,6 +7,7 @@ export enum Status {
   running,
   success,
   error,
+  skip,
 }
 
 export const run = async (
@@ -39,21 +40,8 @@ export const run = async (
     if (process.env["PATH"]) pathEnv.push(process.env["PATH"])
     const PATH = pathEnv.join(path.delimiter)
 
-    // Special case for XP - Vitest with `--pool=forks` exits before finishing all forks
-    let command = "yarn"
-    let commandArgs = ["run", script]
-    if (script === "test" && scriptCmd.includes("--pool=forks")) {
-      const vitest = Bun.which("vitest", {
-        cwd: projectPath,
-        PATH,
-      })
-      if (!vitest) {
-        throw new Error(`"vitest" command not found in PATH\nCWD=${projectPath}\nPATH=${PATH}`)
-      }
-      command = vitest
-      commandArgs = []
-    }
-
+    const command = "yarn"
+    const commandArgs = ["run", script]
     try {
       const child = execFile(command, [...commandArgs, ...args], {
         cwd: projectPath,

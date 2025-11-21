@@ -85,6 +85,9 @@ export const Tui = () => {
           if (statuses.every((status) => status === Status.success)) {
             return Status.success
           }
+          if (statuses.every((status) => status === Status.skip)) {
+            return Status.skip
+          }
           return undefined
         }
 
@@ -124,6 +127,8 @@ export const Tui = () => {
               </Text>
             ) : status.status === Status.success ? (
               <Text color="green">✓</Text>
+            ) : status.status === Status.skip ? (
+              <Text color="yellow">●</Text>
             ) : !status.status ? (
               <Text color="gray">↓</Text>
             ) : (
