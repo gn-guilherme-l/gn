@@ -3,32 +3,32 @@
   "module": "index.ts",
   "type": "module",
   "dependencies": {
-    "fast-glob": "^3.3.2",
-    "ink": "^5.0.1",
+    "fast-glob": "^3.3.3",
+    "ink": "^5.2.0",
     "ink-spinner": "^5.0.0",
-    "prettier": "^3.3.2",
+    "prettier": "^3.5.3",
     "react": "^18.3.1",
-    "type-fest": "^4.20.1"
+    "type-fest": "^4.38.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.5.0",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.23.0",
     "@types/bun": "latest",
     "@types/eslint-config-prettier": "^6.11.3",
-    "@types/eslint__eslintrc": "^2.1.1",
+    "@types/eslint__eslintrc": "^2.1.2",
     "@types/eslint__js": "^8.42.3",
-    "@types/node": "^20.14.8",
-    "@types/react": "^18.3.3",
-    "eslint": "^8.57.0",
+    "@types/node": "^20.17.29",
+    "@types/react": "^18.3.20",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.34.3",
+    "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
-    "eslint-plugin-unused-imports": "^4.0.0",
-    "globals": "^15.6.0",
-    "typescript-eslint": "^7.14.1"
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "globals": "^15.15.0",
+    "typescript-eslint": "^7.18.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.2"
   }
 }
